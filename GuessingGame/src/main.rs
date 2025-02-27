@@ -1,51 +1,31 @@
-fn check_guess(guess: i32, secret: i32) -> i32{
-    if guess == secret{
-        0
-    }
-    else if guess > secret{
-        1
-    } else{
-        -1
+use std::fs::File;
+use std::io::prelude::*;
+
+struct Config {
+    username: String,
+    sid: String,
+}
+
+impl Config {
+    fn from_file(path: &str) -> Config {
+        let mut file = File::open(path).unwrap();
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).unwrap();
+
+        let mut lines = contents.lines();
+        let username = lines.next().unwrap().to_string();
+        let sid = lines.next().unwrap().to_string();
+
+        Config { username, sid }
     }
 }
 
+fn reading_from_file() {
+    let config = Config::from_file("config.txt");
+    println!("username: {}", config.username);
+    println!("sid: {}", config.sid);
+}
 
 fn main() {
-    //hard code the number
-    let secret: i32 = 12;
-    //store the supossed guesses 
-    let guesses = [32,42,30];
-    //track the guessses
-    let mut g_Count = 0;
-    //simulate the guessing
-    let mut i = 0;
-    loop{
-        //controler
-        if i >= guesses.len(){
-            println!("No more guesses");
-            break;
-        }
-
-        //make a guess
-        let guess = guesses[i];
-        g_Count +=1;
-        //check the guess with the function
-        let result = check_guess(guess,secret);
-
-        //determine the guess if it is low or high
-        if result == 0 {
-            println!("You are correct! {} is the secret number.", guess);
-            break;
-        } else if result == 1 {
-            println!("Your guess of {} is too high.", guess);
-        } else {
-            println!("Your guess of {} is too low.", guess);
-        }
-
-        //move to the next number
-        i += 1
-    }
-
-    println!("It took you {} guesses.", g_Count);
+    reading_from_file();
 }
-
